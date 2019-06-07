@@ -281,6 +281,11 @@ namespace FlappyBird
                 return 1;
             }
 
+            if (i_Main.transform.position.x > i_CompareTo.transform.position.x)
+                return 1;
+            else
+                return -1; 
+
             return 0;
         }
 

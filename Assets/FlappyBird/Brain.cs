@@ -20,8 +20,12 @@ namespace FlappyBird
 
         [SerializeField]
         private Eyes m_Eyes = null;
+
         [SerializeField]
         private float m_EyesSightDistance = 1f;
+
+        [SerializeField]
+        private float m_fSpeedFactor = 0.1f;
 
         [SerializeField]
         private bool m_ResetDataOnDeath = false;
@@ -127,8 +131,8 @@ namespace FlappyBird
                 return;
             }
 
-            m_bSeeUpWall = (m_Eyes != null) ? m_Eyes.CanSeeTag("upwall", Vector2.right, m_EyesSightDistance) : false;
-            m_bSeeDownWall = (m_Eyes != null) ? m_Eyes.CanSeeTag("downwall", Vector2.right, m_EyesSightDistance) : false;
+            m_bSeeUpWall = (m_Eyes != null) ? m_Eyes.CanSeeTag("upwall", new Vector2(1,1), m_EyesSightDistance) : false;
+            m_bSeeDownWall = (m_Eyes != null) ? m_Eyes.CanSeeTag("downwall", new Vector2(1, -1), m_EyesSightDistance) : false;
             m_bSeeTop = (m_Eyes != null) ? m_Eyes.CanSeeTag("top", Vector2.up, m_EyesSightDistance) : false;
             m_bSeeBottom = (m_Eyes != null) ? m_Eyes.CanSeeTag("bottom", Vector2.down, m_EyesSightDistance) : false;
 
@@ -137,10 +141,30 @@ namespace FlappyBird
 
         private void FixedUpdate()
         {
+            Vector2 velocity = Vector2.zero;
             if (!m_bIsAlive || !m_Init)
             {
                 return;
             }
+
+            if (!m_bSeeBottom && !m_bSeeDownWall)
+            {
+                velocity.x = (1 * Math.Abs(m_DNA.GetGene(0)) * m_fSpeedFactor);
+            }
+
+            if (!m_bSeeDownWall)
+            {
+                velocity.y = -(1 * Math.Abs(m_DNA.GetGene(1)) * m_fSpeedFactor);
+            }
+            else
+            {
+                velocity.y = (1 * Math.Abs(m_DNA.GetGene(0)) * m_fSpeedFactor);
+            }
+
+
+
+            m_Body2d.velocity = velocity;
+
         }
 
         // LOGIC
